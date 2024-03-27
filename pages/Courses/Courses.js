@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Topbar from "./../../Components/Topbar/Topbar";
 import Navbar from "./../../Components/Navbar/Navbar";
 import Breadcrumb from "./../../Components/Breadcrumb/Breadcrumb";
 import Footer from "./../../Components/Footer/Footer";
 import CourseBox from "./../../Components/CourseBox/CourseBox";
-
+import Pagination from "../../Components/Pagination/Pagination";
 import "./Courses.css";
 
 export default function Courses() {
+  const [courses, setCourses] = useState([]);
+  const [showCoursePagination,setShowCoursePagination] = useState([])
+
+  useEffect(() => {
+    fetch(`http://localhost:4000/v1/courses`)
+      .then((res) => res.json())
+      .then((allCourses) => setCourses(allCourses));
+  }, []);
+
   return (
     <>
       <Topbar />
@@ -19,8 +28,8 @@ export default function Courses() {
           {
             id: 2,
             title: "تمامی دوره ها",
-            to: "courses",
-          },
+            to: "courses"
+          }
         ]}
       />
 
@@ -30,45 +39,19 @@ export default function Courses() {
           <div className="courses-content">
             <div className="container">
               <div className="row">
-                <CourseBox />
-                <CourseBox />
-                <CourseBox />
-                <CourseBox />
-                <CourseBox />
-                <CourseBox />
-                <CourseBox />
-                <CourseBox />
+                {showCoursePagination.map((course) => (
+                  <CourseBox {...course} />
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="courses-pagination">
-            <ul className="courses__pagination-list">
-              <li className="courses__pagination-item">
-                <a href="#" className="courses__pagination-link">
-                  <i className="fas fa-long-arrow-alt-right courses__pagination-icon"></i>
-                </a>
-              </li>
-              <li className="courses__pagination-item">
-                <a
-                  href="#"
-                  className="courses__pagination-link courses__pagination-link--active"
-                >
-                  1
-                </a>
-              </li>
-              <li className="courses__pagination-item">
-                <a href="#" className="courses__pagination-link">
-                  2
-                </a>
-              </li>
-              <li className="courses__pagination-item">
-                <a href="#" className="courses__pagination-link">
-                  3
-                </a>
-              </li>
-            </ul>
-          </div>
+          <Pagination
+            setShowCoursePagination={setShowCoursePagination}
+            items={courses}
+            itemsCount={3}
+            pathName="/courses"
+          />
         </div>
       </section>
       {/* <!--------------------------------  Courses-Section  --------------------------------> */}
